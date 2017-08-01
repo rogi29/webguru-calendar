@@ -1,0 +1,119 @@
+html,
+body {
+	font-size : 14px;
+}
+* {
+	-moz-box-sizing : border-box;
+	box-sizing      : border-box;
+}
+input {
+	border        : .2em solid #000;
+	border-radius : .3em;
+	padding       : 0.5em;
+	width         : 17.5em;
+}
+
+.calendars {
+	direction: rtl;
+}
+
+.calendars {
+	position: relative;
+	width: 600px;
+	background: #fff;
+	text-align: center;
+	padding: 10px 0;
+	border: 2px solid #003480;
+}
+
+.calendars:before {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+	margin: -22px 0;
+    right: 15px;
+    background: #fff;
+    border: 2px solid;
+    border-color: #003480 transparent transparent #003480;
+}
+
+.calendars .close-btn {
+	position: absolute;
+	z-index: 1;
+	margin: 6px 12px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 16px;
+    font-family: arial;
+    background: #003480;
+    color: #fff;
+    left: 0;
+	border: none;
+}
+
+.calendars .from, .calendars .to {
+	display: inline-block;
+	vertical-align: top;
+}
+
+.calendars .pickmeup {
+	background: #ffffff;
+	font-family: arial;
+}
+
+.calendars .pickmeup .pmu-instance {
+	width: 19.2em;
+    height: auto;
+}
+
+.calendars .pickmeup .pmu-instance nav .pmu-month {
+	width: 15em;
+	font-size: 16px;
+	font-weight: 600;
+	color: #0c6dc7;
+}
+
+.calendars .pickmeup .pmu-instance:first-child:last-child nav .pmu-month  {
+	width: 15em;
+}
+
+.calendars .pickmeup .pmu-instance .pmu-days *, .calendars .pickmeup .pmu-instance .pmu-day-of-week * {
+	width: 2.3em;
+    height: 2em;
+	margin: 0.15em;
+}
+.calendars .pickmeup .pmu-instance .pmu-days *{
+	line-height: 2em;
+}
+
+.calendars .pickmeup .pmu-instance .pmu-day-of-week * {
+	color: #0c6dc7;
+	margin: 2px;
+}
+
+.calendars .pickmeup .pmu-days .pmu-button {
+    background: rgba(248, 116, 27, 0.1);
+    color: #666;
+}
+
+.calendars .pickmeup .pmu-days .pmu-button.pmu-selected {
+    background: #f8741b;
+    color: #fff;
+    font-weight: bold;
+}
+
+.calendars .pickmeup .pmu-days .pmu-button.pmu-not-in-month {
+    opacity: 0;
+}
+
+.calendars .pickmeup .pmu-days .pmu-button.pmu-disabled {
+    background: none;
+    color: #ccc;
+    font-weight: normal;
+}
