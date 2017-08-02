@@ -27,7 +27,7 @@ $(document).ready(function () {
 
 	module.setCloseBtn('.close-btn');
 	module.setOpenBtn('.open-calendars', {complete: function () {
-		//updateDates();
+		updateDates();
 	    module.update();
 	}});
 
@@ -35,10 +35,10 @@ $(document).ready(function () {
 		if (dates[0].isAfter(date.unparsed))
 			return {disabled : true, class_name : 'date-history'};
 
-		// if (formatedDates.indexOf(date.formated) > -1)
-		// 	return {};
-		//
-		// return {disabled : true, class_name : 'date-unavailable'};
+		if (formatedDates.indexOf(date.formated) > -1)
+			return {};
+
+		return {disabled : true, class_name : 'date-unavailable'};
 		return {};
     });
 

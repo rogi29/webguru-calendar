@@ -1,0 +1,14 @@
+article h4.name {
+    border-top: 1px solid;
+    background: #6d426d;
+    color: #ffffff;
+    padding: 5px;
+}
+
+article .signature, .type-signature {
+    color: #fc83ff;
+}
+
+article h4 .type-signature:nth-child(3) {
+    color: #fff;
+}
