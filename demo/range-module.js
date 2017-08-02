@@ -39,7 +39,6 @@ $(document).ready(function () {
 			return {};
 
 		return {disabled : true, class_name : 'date-unavailable'};
-		return {};
     });
 
 	module.onChange(function (e) {
