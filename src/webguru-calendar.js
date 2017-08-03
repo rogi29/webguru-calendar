@@ -284,6 +284,7 @@
          * @returns {*}
          */
         clear: function() {
+            this.counter = 0;
             return this.picker.clear();
         },
 
@@ -310,6 +311,7 @@
          * @returns {*}
          */
         destroy: function() {
+            this.clear();
             return this.picker.destroy();
         },
 
@@ -458,7 +460,7 @@
             this.options['render'] = function (date) {
                 var parsed = moment(date).startOf('day');
 
-                return callback({
+                return callback.call(this, {
                     unparsed:   date,
                     parsed:     parsed,
                     formated:   parsed.format(obj.format)
@@ -556,6 +558,7 @@
                 throw new TypeError("Function type - argument provided is not a function type");
 
             $(this.selector).on('pickmeup-fill', function (e) {
+                if(obj.counter > 1) obj.counter = 0;
                 callback.call(obj, e);
             });
 
