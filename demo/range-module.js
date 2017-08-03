@@ -47,6 +47,8 @@ $(document).ready(function () {
 			firstDate	= this.formatDate(dates[0]),
 			secondDate	= this.formatDate(dates[1]);
 
+		console.log('change', selection);
+
 		switch (selection) {
 			case 1:
 				this.moveTo(200);
@@ -62,11 +64,11 @@ $(document).ready(function () {
 	});
 
 	module.onFill(function (e) {
-		console.log(e);
+		console.log('fill', e);
 	});
 
 	module.onShow(function (e) {
-		console.log(e);
+		console.log('show', e);
 	});
 
     module.initialise(new Date());
