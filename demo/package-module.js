@@ -2,7 +2,7 @@ $(document).ready(function () {
 	var calendar 	= new Calendar('#packages-calendars .from', {mode: 'single', calendars: 1}),
 		calendar2 	= new Calendar('#packages-calendars .to', {mode: 'single', calendars: 1});
 
-	calendar.setCloseBtn('.close-btn', {parent: '#packages-calendars'});
+	calendar.setCloseBtn('.close-btn', {parent: '#packages-calendars', target: '#packages-calendars'});
 
     calendar.onRender(function(date) {
 		var today = moment(new Date()).startOf('day');
