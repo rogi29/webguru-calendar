@@ -13,8 +13,19 @@ input {
 	width         : 17.5em;
 }
 
+section {
+	width: 1280px;
+	margin: 0 auto;
+}
+
+.engine {
+	direction: rtl;
+	text-align: right;
+}
+
 .calendars {
 	direction: rtl;
+	margin-top: 18px;
 }
 
 .calendars {

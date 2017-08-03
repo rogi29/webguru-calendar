@@ -63,8 +63,8 @@
         this.options.format = 'd-m-Y';
 
         if (this.options.hide || $(this.selector).css('display') == 'none') {
-            $(this.selector).hide();
-            obj.display = 'none';
+            this.hide({mode: 'instant'});
+            this.display = 'none';
         }
     };
 
@@ -389,6 +389,23 @@
          */
         setFormat: function (name) {
             this.format = Calender.config.formats.get(name);
+            return true;
+        },
+
+        /**
+         *
+         *
+         * @returns {*|jQuery|Element}
+         */
+        getElement: function () {
+            return $(this.selector);
+        },
+
+        resetPosition: function (selector) {
+            var target = $(selector || this.selector);
+
+            target.css({left: 0, top: 0, transform: 'translate(0, 0)'});
+
             return true;
         },
 

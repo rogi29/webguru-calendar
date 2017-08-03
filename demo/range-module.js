@@ -1,6 +1,8 @@
 $(document).ready(function () {
-	var module 	= new Calendar('#calendars', {hide: false, format: 'DD-MM-YY'}),
-		dates 	= [moment(new Date()).startOf('day'), moment(new Date()).startOf('day'), moment(new Date()).startOf('day'), moment(new Date()).startOf('day'), moment(new Date()).startOf('day')],
+	var module 		= new Calendar('#calendars', {hide: true, format: 'DD-MM-YY'}),
+		departDate	= $('.engine .departure'),
+		returnDate 	= $('.engine .return'),
+		dates 		= [moment(new Date()).startOf('day'), moment(new Date()).startOf('day'), moment(new Date()).startOf('day'), moment(new Date()).startOf('day'), moment(new Date()).startOf('day')],
 		formatedDates = [];
 
 	dates[0].add(1, 'd');
@@ -26,10 +28,34 @@ $(document).ready(function () {
 	}
 
 	module.setCloseBtn('.close-btn');
-	module.setOpenBtn('.open-calendars', {complete: function () {
-		updateDates();
-	    module.update();
-	}});
+
+	/*
+        module.hideTrigger = true;
+        module.getElement().on('mousedown', function(e) {
+            module.hideTrigger = false;
+        });
+
+        departDate.on('focus', function () {
+            module.hideTrigger = false;
+            module.resetPosition();
+            module.show();
+        });
+
+        returnDate.on('focus', function () {
+            module.hideTrigger = false;
+            module.setDate(module.getDates());
+            module.show();
+        });
+
+        $(document).on('click', function (e) {
+            if(!module.hideTrigger) {
+                module.hideTrigger = true;
+                return;
+            }
+
+            module.hide();
+        });
+    */
 
     module.onRender(function(date) {
 		if (dates[0].isAfter(date.unparsed))
@@ -47,28 +73,20 @@ $(document).ready(function () {
 			firstDate	= this.formatDate(dates[0]),
 			secondDate	= this.formatDate(dates[1]);
 
-		console.log('change', selection);
-
 		switch (selection) {
 			case 1:
-				this.moveTo(200);
+				this.moveTo(-240);
+				departDate.val(firstDate);
 				break;
 
 			case 2:
 				this.hide();
+				returnDate.val(secondDate);
 				break;
 
 			default:
 				break;
 		}
-	});
-
-	module.onFill(function (e) {
-		console.log('fill', e);
-	});
-
-	module.onShow(function (e) {
-		console.log('show', e);
 	});
 
     module.initialise(new Date());

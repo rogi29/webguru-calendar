@@ -14,7 +14,6 @@ $(document).ready(function () {
     });
 
     calendar.initialise(new Date());
-
 	calendar2.initialise();
 	calendar2.next();
 });
