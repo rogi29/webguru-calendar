@@ -99,6 +99,7 @@ section {
     height: 2em;
 	margin: 0.15em;
 }
+
 .calendars .pickmeup .pmu-instance .pmu-days *{
 	line-height: 2em;
 }
@@ -111,12 +112,25 @@ section {
 .calendars .pickmeup .pmu-days .pmu-button {
     background: rgba(248, 116, 27, 0.1);
     color: #666;
+	transition: background 0.5s;
+}
+
+.calendars .pickmeup .pmu-days .pmu-button:hover {
+	text-decoration: underline;
+}
+
+.calendars .pickmeup .pmu-days .pmu-button.pmu-disabled:hover {
+	text-decoration: none;
 }
 
 .calendars .pickmeup .pmu-days .pmu-button.pmu-selected {
-    background: #f8741b;
+    background: rgb(249, 116, 27);
     color: #fff;
     font-weight: bold;
+}
+
+.calendars .pickmeup .pmu-days .pmu-button.date-hovered {
+	background: rgba(249, 116, 27, 0.4);
 }
 
 .calendars .pickmeup .pmu-days .pmu-button.pmu-not-in-month {

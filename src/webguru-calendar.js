@@ -25,6 +25,7 @@
  * //Initializing the calendar
  * twoCalendars.initialise(new Date());
  */
+
 (function() {
     /**
      * Webguru-calendar Object - A Setup for the `pickmeup` instantiation.
@@ -36,31 +37,31 @@
      * @param options {Object} Options of 'pickmeup' module API with extra settings.
      */
     var Calendar = function (selector, options) {
-        this.picker     = {};
-        this.selector   = selector;
-        this.display    = 'initial';
-        this.counter    = 0;
         /**
          * Default settings
          * The default settings could be override by the `options` @param
          *
          * @type {{first_day: number, calendars: number, flat: boolean, parent: boolean, locale: string, mode: string, format: *, hide: boolean, default_date: boolean}}
          */
-        this.options    = {
-            first_day:  0,
-            calendars:  2,
-            flat:       true,
-            parent:     false,
-            locale:     'he',
-            mode:       'range',
-            format:     Calendar.config.formats.get('default'),
-            hide:       false,
+        this.options = Object.assign({
+            first_day:      0,
+            calendars:      2,
+            flat:           true,
+            parent:         false,
+            locale:         'he',
+            mode:           'range',
+            format:         Calendar.config.formats.get('default'),
+            hide:           false,
             default_date:   false
-        };
+        }, options);
 
-        this.options        = Object.assign(this.options, options);
+        this.picker         = {};
+        this.selector       = selector;
+        this.display        = 'initial';
+        this.selection      = 0;
         this.format         = this.options.format;
         this.options.format = 'd-m-Y';
+        this.classes        = {button: 'pmu-button',  notInMonth: 'pmu-not-in-month'};
 
         if (this.options.hide || $(this.selector).css('display') == 'none') {
             this.hide({mode: 'instant'});
@@ -127,6 +128,19 @@
      */
     Calendar.prototype = {
         /**
+         * Parse a date with MomentJS
+         *
+         * @function
+         * @inner
+         * @memberof module:Calendar
+         *
+         * @returns {date|Moment}
+         */
+        parse: function (date) {
+            return moment(date);
+        },
+
+        /**
          * Check if the calendar is hidden.
          *
          * @function
@@ -170,8 +184,10 @@
          * @returns {boolean}
          */
         show: function(options) {
-            var options = Object.assign({target: this.selector, complete: function(){}}, options),
-                target  = $(options.target);
+            var target;
+
+            options = Object.assign({target: this.selector, complete: function(){}}, options);
+            target  = $(options.target);
 
             if (this.isHidden()) {
                 switch(options.mode) {
@@ -207,8 +223,10 @@
          * @returns {boolean}
          */
         hide: function(options) {
-            var options = Object.assign({target: this.selector, complete: function(){}}, options),
-                target  = $(options.target);
+            var target;
+
+            options = Object.assign({target: this.selector, complete: function(){}}, options);
+            target  = $(options.target);
 
             if (!this.isHidden()) {
                 switch(options.mode) {
@@ -229,7 +247,7 @@
         },
 
         /**
-         * Move the calendar to an Element position or number
+         * Move the calendar to an Element position or to a specified number
          *
          * @function
          * @inner
@@ -240,16 +258,36 @@
          * @param options {Object} jQuery Animate options
          */
         moveTo: function (to, properties, options) {
-            var destination = (to instanceof $ || typeof to == 'string') ? $(to).position().left : to,
-                properties  = Object.assign({left: destination}, properties),
-                options     = options || {selector: this.selector},
-                selector    = $(options.selector);
+            var selector,
+                destination = (to instanceof $ || typeof to == 'string') ? $(to).position().left : to;
+
+            properties  = Object.assign({left: destination}, properties);
+            options     = options || {selector: this.selector};
+            selector    = $(options.selector);
 
             selector.animate(properties, options);
         },
 
         /**
-         * Go Previous Month
+         * Reset calendar position
+         *
+         * @function
+         * @inner
+         * @memberof module:Calendar
+         *
+         * @param selector
+         * @return {boolean}
+         */
+        resetPosition: function (selector) {
+            var target = $(selector || this.selector);
+
+            target.css({left: 0, top: 0, transform: 'translate(0, 0)'});
+
+            return true;
+        },
+
+        /**
+         * Go to previous month
          *
          * @function
          * @inner
@@ -262,7 +300,7 @@
         },
 
         /**
-         * Go Next Month
+         * Go to next month
          *
          * @function
          * @inner
@@ -275,7 +313,7 @@
         },
 
         /**
-         * Clear calendar
+         * Clear multiple selection
          *
          * @function
          * @inner
@@ -284,7 +322,7 @@
          * @returns {*}
          */
         clear: function() {
-            this.counter = 0;
+            this.selection = 0;
             return this.picker.clear();
         },
 
@@ -393,7 +431,7 @@
         },
 
         /**
-         *
+         * Get the element with the selector specified on instancition
          *
          * @returns {*|jQuery|Element}
          */
@@ -401,15 +439,8 @@
             return $(this.selector);
         },
 
-        resetPosition: function (selector) {
-            var target = $(selector || this.selector);
-
-            target.css({left: 0, top: 0, transform: 'translate(0, 0)'});
-
-            return true;
-        },
-
         /**
+         * Set an element as a close button for the Calendar
          *
          * @function
          * @inner
@@ -421,10 +452,11 @@
          * @returns {boolean}
          */
         setCloseBtn: function (selector, options) {
+            options = options || {};
+
             var obj     = this,
-                options = options || {},
                 event   = options.event || 'click',
-                parent  = $(options.parent || this.selector)
+                parent  = $(options.parent || this.selector),
                 target  = $(options.target || this.selector);
 
             parent.find(selector).on(event, function (e) {
@@ -435,6 +467,7 @@
         },
 
         /**
+         * Set an element as an open button for the Calendar
          *
          * @function
          * @inner
@@ -446,8 +479,9 @@
          * @returns {boolean}
          */
         setOpenBtn: function (selector, options) {
+            options = options || {};
+
             var obj     = this,
-                options = options || {},
                 event   = options.event || 'click',
                 parent  = $(options.parent || document),
                 target  = $(options.target || this.selector);
@@ -460,6 +494,7 @@
         },
 
         /**
+         * Executed for each day element rendering, takes date argument, allows to select, disable or add class to element
          *
          * @function
          * @inner
@@ -474,14 +509,20 @@
             if(typeof callback !== 'function')
                 throw new TypeError("Function type - argument provided is not a function type");
 
-            this.options['render'] = function (date) {
-                var parsed = moment(date).startOf('day');
+            this.options.render = function (date) {
+                var parsed = obj.parse(date).startOf('day');
 
-                return callback.call(this, {
-                    unparsed:   date,
-                    parsed:     parsed,
-                    formated:   parsed.format(obj.format)
-                });
+                return callback.call(
+                    this,
+                    {
+                        detail: obj
+                    },
+                    {
+                        unparsed:   date,
+                        parsed:     parsed,
+                        formated:   parsed.format(obj.format)
+                    }
+                );
             };
 
             return true;
@@ -498,14 +539,14 @@
          * @returns {boolean}
          */
         onChange: function (callback) {
-            var obj     = this;
+            var obj = this;
 
             if(typeof callback !== 'function')
                 throw new TypeError("Function type - argument provided is not a function type");
 
             $(this.selector).on('pickmeup-change', function (e) {
-                obj.counter = (obj.counter > 1) ? 0 : obj.counter + 1;
-                e.detail.selection = obj.counter;
+                obj.selection = (obj.selection > 1) ? 1 : obj.selection + 1;
+                e.detail.selection = obj.selection;
                 callback.call(obj, e);
             });
 
@@ -525,7 +566,7 @@
         onShow: function (callback) {
             var obj = this;
 
-            if(typeof callback !== 'function')
+            if (typeof callback !== 'function')
                 throw new TypeError("Function type - argument provided is not a function type");
 
             $(this.selector).on('pickmeup-show', function (e) {
@@ -548,7 +589,7 @@
         onHide: function (callback) {
             var obj = this;
 
-            if(typeof callback !== 'function')
+            if (typeof callback !== 'function')
                 throw new TypeError("Function type - argument provided is not a function type");
 
             $(this.selector).on('pickmeup-hide', function (e) {
@@ -575,7 +616,7 @@
                 throw new TypeError("Function type - argument provided is not a function type");
 
             $(this.selector).on('pickmeup-fill', function (e) {
-                if(obj.counter > 1) obj.counter = 0;
+                if(obj.selection > 1) obj.selection = 0;
                 callback.call(obj, e);
             });
 
@@ -583,6 +624,7 @@
         },
 
         /**
+         * Ajax request
          *
          * @function
          * @inner
@@ -603,6 +645,91 @@
         },
 
         /**
+         * Paint a date button onHover
+         *
+         * @function
+         * @inner
+         * @memberof module:Calendar
+         *
+         * @param hoverClass
+         * @param positionClass
+         * @param siblingsFn
+         *
+         * @returns {function}
+         */
+    	hoverPaint: function (hoverClass, positionClass, siblingsFn) {
+            var btns = '.' + this.classes.button + '.' + positionClass;
+
+    		return function (e) {
+    			var target = $(e.target);
+
+    			target.addClass(hoverClass);
+
+    			target[siblingsFn]().each(function (i, el) {
+    				var t = $(el);
+
+    				if(t.hasClass(positionClass))
+    					t.addClass(hoverClass);
+    			})
+
+    			target.parent().parent()[siblingsFn]().find(btns).addClass(hoverClass);
+    		};
+    	},
+
+        /**
+         *
+         * @function
+         * @private
+         * @memberof module:Calendar
+         *
+         * @param className
+         *
+         * @returns {boolean}
+         */
+        __hoverDirSelector: function (className) {
+            return '.' + this.classes.button + '.' + className + ':not(.' + this.classes.notInMonth + ')';
+        },
+
+        /**
+         * Paint dates on mouse follow
+         *
+         * @function
+         * @inner
+         * @memberof module:Calendar
+         *
+         * @param beforeClass
+         * @param afterClass
+         * @param hoverClass
+         * @param selector
+         *
+         * @returns {boolean}
+         */
+        followMouse: function (beforeClass, afterClass, hoverClass, selector) {
+            var obj         = this,
+                beforeBtns  = this.__hoverDirSelector(beforeClass),
+                afterBtns   = this.__hoverDirSelector(afterClass);
+
+            selector = selector || obj.selector;
+
+    		$(selector)
+    			.find(beforeBtns)
+    			.mouseenter(obj.hoverPaint(hoverClass, beforeClass, 'nextAll'));
+
+    		$(selector)
+    			.find(afterBtns)
+    			.mouseenter(obj.hoverPaint(hoverClass, afterClass, 'prevAll'));
+
+    		$(selector)
+    			.find(beforeBtns + ', ' + afterBtns)
+    			.mouseleave(function (e) {
+    				$(obj.selector).find('.' + hoverClass).removeClass(hoverClass);
+    			});
+
+            return true;
+        },
+
+        /**
+         * Initialise Claendar
          *
          * @function
          * @inner
@@ -613,12 +740,13 @@
          */
         initialise: function (dates, min) {
             var options     = this.options,
-                selector    = this.selector,
-                min         = min || dates;
+                selector    = this.selector;
 
-            options['date'] = dates;
-            options['min'] = min;
-            this.picker = pickmeup(selector, options);
+            min = min || dates;
+
+            options.date    = dates;
+            options.min     = min;
+            this.picker     = pickmeup(selector, options);
         }
     };
 

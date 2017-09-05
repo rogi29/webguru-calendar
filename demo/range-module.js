@@ -1,9 +1,10 @@
-$(document).ready(function () {
+function rangeModule () {
 	var module 		= new Calendar('#calendars', {hide: true, format: 'DD-MM-YY'}),
 		departDate	= $('.engine .departure'),
 		returnDate 	= $('.engine .return'),
 		dates 		= [moment(new Date()).startOf('day'), moment(new Date()).startOf('day'), moment(new Date()).startOf('day'), moment(new Date()).startOf('day'), moment(new Date()).startOf('day')],
-		formatedDates = [];
+		formatedDates 	= [],
+		prevDates		= [];
 
 	dates[0].add(1, 'd');
 	dates[1].add(2, 'd');
@@ -29,40 +30,46 @@ $(document).ready(function () {
 
 	module.setCloseBtn('.close-btn');
 
-	/*
-        module.hideTrigger = true;
-        module.getElement().on('mousedown', function(e) {
-            module.hideTrigger = false;
-        });
+    departDate.on('focus', function () {
+        module.resetPosition();
+        module.show();
+    });
 
-        departDate.on('focus', function () {
-            module.hideTrigger = false;
-            module.resetPosition();
-            module.show();
-        });
+    returnDate.on('focus', function () {
+        module.setDate(module.getDates());
+        module.show();
 
-        returnDate.on('focus', function () {
-            module.hideTrigger = false;
-            module.setDate(module.getDates());
-            module.show();
-        });
+		if (departDate.val() != '') {
+			module.moveTo(-240);
+		}
+    });
 
-        $(document).on('click', function (e) {
-            if(!module.hideTrigger) {
-                module.hideTrigger = true;
-                return;
-            }
+    module.onRender(function (e, date) {
+		var selection = e.detail.selection;
 
-            module.hide();
-        });
-    */
-
-    module.onRender(function(date) {
 		if (dates[0].isAfter(date.unparsed))
 			return {disabled : true, class_name : 'date-history'};
 
-		if (formatedDates.indexOf(date.formated) > -1)
+		if (formatedDates.indexOf(date.formated) > -1) {
+			switch (selection) {
+				case 1:
+					if (date.parsed.isAfter(this.date[0]))
+						return {class_name : 'date-available-after'};
+
+					if (date.parsed.isBefore(this.date[0]))
+						return {class_name : 'date-available-before'};
+
+					break;
+
+				case 2:
+					if (date.parsed.isAfter(this.date[1]))
+						return {class_name : 'date-available-after'};
+
+					break;
+			}
+
 			return {};
+		}
 
 		return {disabled : true, class_name : 'date-unavailable'};
     });
@@ -71,23 +78,30 @@ $(document).ready(function () {
 	    var selection 	= e.detail.selection,
 			dates		= this.getDates(),
 			firstDate	= this.formatDate(dates[0]),
-			secondDate	= this.formatDate(dates[1]);
+			secondDate	= this.formatDate(dates[1]),
+			firstParsed	= this.parse(dates[0]);
 
 		switch (selection) {
 			case 1:
+				if (this.formatDate(firstParsed.endOf('month')) == firstDate) {
+					this.next();
+				}
 				this.moveTo(-240);
-				departDate.val(firstDate);
 				break;
 
 			case 2:
 				this.hide();
-				returnDate.val(secondDate);
-				break;
-
-			default:
 				break;
 		}
+
+		departDate.val(firstDate);
+		returnDate.val(secondDate);
+	});
+
+	module.onFill(function (e) {
+		prevDates = ('get_date' in this.picker) ? ([]).concat(this.getDates()) : [];
+		this.followMouse('date-available-before', 'date-available-after', 'date-hovered');
 	});
 
     module.initialise(new Date());
-});
+}
