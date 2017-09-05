@@ -1,4 +1,4 @@
-$(document).ready(function () {
+function packageModule() {
 	var calendar 	= new Calendar('#packages-calendars .from', {mode: 'single', calendars: 1}),
 		calendar2 	= new Calendar('#packages-calendars .to', {mode: 'single', calendars: 1});
 
@@ -14,7 +14,6 @@ $(document).ready(function () {
     });
 
     calendar.initialise(new Date());
-
 	calendar2.initialise();
 	calendar2.next();
-});
+}

@@ -15,11 +15,11 @@
 <h1>PickMeUp - Really simple, powerful, customizable and lightweight standalone datepicker</h1>
 <a href="https://github.com/nazar-pc/PickMeUp">GitHub repository</a>
 
-<button type="button" class="open-calendars">Open</button>
-
 <section>
 	<h2>2 calendars + range</h2>
-	<article>
+	<article class="engine">
+		<input type="text" class="departure" />
+		<input type="text" class="return" />
 		<div id="calendars" class="calendars">
 			<button type="button" class="close-btn">x</button>
 		</div>
@@ -36,3 +36,8 @@
 		</div>
 	</article>
 </section>
+
+<script>
+    packageModule();
+    rangeModule();
+</script>
