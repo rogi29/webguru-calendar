@@ -1,5 +1,5 @@
 ### webguru-calendar 1.0.0 - Calendar for WebGuru
-Documentation 1.0.0: https://rogi29.github.io/webguru-calendar/index.html
+Documentation 1.0.0: https://rogi29.github.io/webguru-calendar/docs/
 
 Webguru-calendar is an easy to use and flexible datepicker that fully utilize both `pickmeup` and `MomentJS` functionality.
 
