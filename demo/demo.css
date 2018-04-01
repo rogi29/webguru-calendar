@@ -142,3 +142,86 @@ section {
     color: #ccc;
     font-weight: normal;
 }
+
+
+#scrollableCalendar .pickmeup {
+    overflow: hidden;
+}
+
+#scrollableCalendar .pickmeup .pmu-instance {
+    display:  block;
+}
+
+#scrollableCalendar .pickmeup .pmu-instance .pmu-prev,
+#scrollableCalendar .pickmeup .pmu-instance .pmu-next {
+    display: none !important;
+}
+
+#scrollableCalendar.calendars .pickmeup .pmu-days .pmu-button.pmu-not-in-month {
+    display:  none;
+}
+
+#scrollableCalendar.calendars .pickmeup .pmu-days {
+    text-align:  right;
+}
+
+#scrollableCalendar.calendars .pickmeup .pmu-days .pmu-button.pmu-selected,
+#scrollableCalendar.calendars .pickmeup .pmu-days .pmu-button.date-hovered {
+    background:  transparent;
+    color: #ff7d11;
+    border: 1px solid;
+}
+
+#scrollableCalendar.calendars .pickmeup .pmu-days .pmu-button {
+    background:  transparent;
+    border: 1px solid;
+    border-color: #aaa;
+    text-align:  center;
+    font-weight:  500 !important;
+    height: 4.5rem;
+    font-size: 1.75rem;
+}
+
+#scrollableCalendar.calendars .pickmeup .pmu-days .pmu-button.pmu-selected.first-selected,
+#scrollableCalendar.calendars .pickmeup .pmu-days .pmu-button.pmu-selected.last-selected {
+    background: #ff7d11;
+    color: #fff;
+    border-color: #ff7d11;
+}
+
+#scrollableCalendar.calendars .pickmeup .pmu-instance {
+    width: 100%;
+	height: 38.5rem;
+    margin-top: 1rem;
+	overflow: hidden;
+}
+
+#scrollableCalendar.calendars:before {
+    display: none;
+}
+
+#scrollableCalendar.calendars {
+    width: 838px;
+    border: none;
+}
+
+#scrollableCalendar.calendars .pickmeup .pmu-days .pmu-button,
+#scrollableCalendar.calendars .pickmeup .pmu-instance .pmu-day-of-week * {
+    width: 7rem;
+    margin: 0.7rem;
+}
+
+#scrollableCalendar .pickmeup .pmu-instance .pmu-day-of-week {display:  block;box-sizing:  border-box;width:  100%;text-align:  center;}
+
+#scrollableCalendar.calendars .pickmeup .pmu-instance nav .pmu-month {
+    color: #aaa;
+    font-size: 1.35rem;
+    text-align:  center;
+    width: 100%;
+    padding: 1rem 0;
+}
+
+#scrollableCalendar.calendars .pickmeup .pmu-instance .pmu-day-of-week * {
+    color: #aaa;
+    font-size: 1.25rem;
+}

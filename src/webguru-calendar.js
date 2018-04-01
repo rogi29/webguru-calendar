@@ -57,15 +57,19 @@
 
         this.picker         = {};
         this.selector       = selector;
-        this.display        = 'initial';
-        this.selection      = 0;
         this.format         = this.options.format;
         this.options.format = 'd-m-Y';
         this.classes        = {button: 'pmu-button',  notInMonth: 'pmu-not-in-month'};
+        this.state          = {
+            display: 'initial',
+            selection: 0,
+            currCalendar: 1,
+            prevDates: []
+        };
 
         if (this.options.hide || $(this.selector).css('display') == 'none') {
             this.hide({mode: 'instant'});
-            this.display = 'none';
+            this.setState('display', 'none');
         }
     };
 
@@ -136,7 +140,10 @@
          *
          * @returns {date|Moment}
          */
-        parse: function (date) {
+        parse: function (date, format) {
+            if (typeof format !== 'undefined')
+                return moment(date, format);
+
             return moment(date);
         },
 
@@ -150,7 +157,7 @@
          * @returns {boolean}
          */
         isHidden: function ( ) {
-            return this.display == 'none';
+            return this.getState('display') === 'none';
         },
 
         /**
@@ -200,7 +207,7 @@
                         break;
                 }
 
-                this.display = 'initial';
+                this.setState('display', 'initial');
                 return true;
             }
 
@@ -239,7 +246,7 @@
                         break;
                 }
 
-                this.display = 'none';
+                this.setState('display', 'none');
                 return true;
             }
 
@@ -281,7 +288,8 @@
         resetPosition: function (selector) {
             var target = $(selector || this.selector);
 
-            target.css({left: 0, top: 0, transform: 'translate(0, 0)'});
+            target.stop();
+            target.animate({left: 0}, {duration: 0, queue: false});
 
             return true;
         },
@@ -322,8 +330,22 @@
          * @returns {*}
          */
         clear: function() {
-            this.selection = 0;
+            this.setState('selection', 0);
             return this.picker.clear();
+        },
+
+        /**
+         * Destroy calendar
+         *
+         * @function
+         * @inner
+         * @memberof module:Calendar
+         *
+         * @returns {*}
+         */
+        destroy: function() {
+            this.clear();
+            return this.picker.destroy();
         },
 
         /**
@@ -339,18 +361,18 @@
             return this.picker.update();
         },
 
-        /**
-         * Destroy calendar
-         *
-         * @function
-         * @inner
-         * @memberof module:Calendar
-         *
-         * @returns {*}
-         */
-        destroy: function() {
-            this.clear();
-            return this.picker.destroy();
+        setState: function (key, value) {
+            if (typeof value === 'function') {
+                this.state[key] = value(this.state[key]);
+            } else {
+                this.state[key] = value;
+            }
+
+            return true;
+        },
+
+        getState: function (key) {
+            return this.state[key];
         },
 
         /**
@@ -513,10 +535,8 @@
                 var parsed = obj.parse(date).startOf('day');
 
                 return callback.call(
+                    obj,
                     this,
-                    {
-                        detail: obj
-                    },
                     {
                         unparsed:   date,
                         parsed:     parsed,
@@ -539,15 +559,18 @@
          * @returns {boolean}
          */
         onChange: function (callback) {
-            var obj = this;
+            var obj = this, dates;
 
             if(typeof callback !== 'function')
                 throw new TypeError("Function type - argument provided is not a function type");
 
             $(this.selector).on('pickmeup-change', function (e) {
-                obj.selection = (obj.selection > 1) ? 1 : obj.selection + 1;
-                e.detail.selection = obj.selection;
+                obj.setState('selection', function (selection) {
+                    return (selection > 1) ? 1 : selection + 1;
+                });
+
                 callback.call(obj, e);
+                obj.setState('prevDates', obj.getDates());
             });
 
             return true;
@@ -616,11 +639,30 @@
                 throw new TypeError("Function type - argument provided is not a function type");
 
             $(this.selector).on('pickmeup-fill', function (e) {
-                if(obj.selection > 1) obj.selection = 0;
                 callback.call(obj, e);
             });
 
             return true;
+        },
+
+        onDate: function (eventName, selector, callback) {
+            var filter, obj = this;
+
+            if(typeof callback !== 'function')
+                throw new TypeError("Function type - argument provided is not a function type");
+
+            if (typeof selector === 'function') {
+                callback = selector;
+                selector = undefined;
+            }
+
+            filter = '.' + this.classes.button + (selector || '');
+
+            $(this.selector)
+                .find(filter)
+                .on(eventName, function (e) {
+                    callback.call(obj, e);
+                });
         },
 
         /**
@@ -687,7 +729,7 @@
          * @returns {boolean}
          */
         __hoverDirSelector: function (className) {
-            return '.' + this.classes.button + '.' + className + ':not(.' + this.classes.notInMonth + ')';
+            return '.' + className + ':not(.' + this.classes.notInMonth + ')';
         },
 
         /**
@@ -709,21 +751,25 @@
                 beforeBtns  = this.__hoverDirSelector(beforeClass),
                 afterBtns   = this.__hoverDirSelector(afterClass);
 
-            selector = selector || obj.selector;
+            this.onDate(
+                'mouseenter',
+                beforeBtns,
+                obj.hoverPaint(hoverClass, beforeClass, 'nextAll')
+            );
 
-    		$(selector)
-    			.find(beforeBtns)
-    			.mouseenter(obj.hoverPaint(hoverClass, beforeClass, 'nextAll'));
+            this.onDate(
+                'mouseenter',
+                afterBtns,
+                obj.hoverPaint(hoverClass, afterClass, 'prevAll')
+            );
 
-    		$(selector)
-    			.find(afterBtns)
-    			.mouseenter(obj.hoverPaint(hoverClass, afterClass, 'prevAll'));
-
-    		$(selector)
-    			.find(beforeBtns + ', ' + afterBtns)
-    			.mouseleave(function (e) {
-    				$(obj.selector).find('.' + hoverClass).removeClass(hoverClass);
-    			});
+            this.onDate(
+                'mouseleave',
+                beforeBtns + ', ' + afterBtns,
+                function (e) {
+                    $(obj.selector).find('.' + hoverClass).removeClass(hoverClass);
+                }
+            );
 
             return true;
         },
