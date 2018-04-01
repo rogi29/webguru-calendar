@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <title>PickMeUp - Really simple, powerful, customizable and lightweight standalone datepicker</title>
 <link rel="stylesheet" href="css/pickmeup.css" type="text/css" />
@@ -12,35 +10,23 @@
 <script type="text/javascript" src="dist/moment.min.js"></script>
 <script type="text/javascript" src="src/webguru-calendar.js"></script>
 <script type="text/javascript" src="demo/config.js" charset="UTF-8"></script>
-<script type="text/javascript" src="demo/range-module.js" charset="UTF-8"></script>
-<script type="text/javascript" src="demo/package-module.js" charset="UTF-8"></script>
+<script type="text/javascript" src="demo/scrollable-calendar.js" charset="UTF-8"></script>
 <h1>PickMeUp - Really simple, powerful, customizable and lightweight standalone datepicker</h1>
 <a href="https://github.com/nazar-pc/PickMeUp">GitHub repository</a>
-<a href="scrollable.html">Scrollable Calendar</a>
 
 <section>
-	<h2>2 calendars + range</h2>
+	<h2>Scrollable Calendar</h2>
 	<article class="engine">
-		<input type="text" class="departure" />
-		<input type="text" class="return" />
-		<div id="calendars" class="calendars">
-			<button type="button" class="close-btn">x</button>
-		</div>
-	</article>
-</section>
-
-<section>
-	<h2>2 calendars + single - packages</h2>
-	<article>
-		<div id="packages-calendars" class="calendars">
-			<button type="button" class="close-btn">x</button>
-			<div class="from"></div>
-			<div class="to"></div>
+		<div id="scrollableCalendar" class="calendars">
+            <button class="calendarLoader">Load More</button>
 		</div>
 	</article>
 </section>
 
 <script>
-    packageModule();
-    rangeModule();
+    (function () {
+        var calendar = new ScrollableCalendar();
+
+        calendar.init(new Date());
+    })();
 </script>
