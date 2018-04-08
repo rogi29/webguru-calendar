@@ -361,6 +361,15 @@
             return this.picker.update();
         },
 
+        /**
+         * Set state
+         *
+         * @function
+         * @inner
+         * @memberof module:Calendar
+         *
+         * @returns {boolean}
+         */
         setState: function (key, value) {
             if (typeof value === 'function') {
                 this.state[key] = value(this.state[key]);
@@ -371,6 +380,15 @@
             return true;
         },
 
+        /**
+         * Get state
+         *
+         * @function
+         * @inner
+         * @memberof module:Calendar
+         *
+         * @returns {object}
+         */
         getState: function (key) {
             return this.state[key];
         },
@@ -410,7 +428,7 @@
          * @memberof module:Calendar
          *
          * @param date {Date|String} Date to format
-         * @param format {String} Date format
+         * @param format {String} Date format to format to
          *
          * @returns {*}
          */
@@ -434,7 +452,7 @@
             if (typeof name == 'undefined')
                 return this.format;
 
-            return Calender.config.formats.get(name);
+            return Calendar.config.formats.get(name);
         },
 
         /**
@@ -448,7 +466,7 @@
          * @returns {boolean}
          */
         setFormat: function (name) {
-            this.format = Calender.config.formats.get(name);
+            this.format = Calendar.config.formats.get(name);
             return true;
         },
 
